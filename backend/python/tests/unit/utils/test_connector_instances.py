@@ -41,8 +41,9 @@ class TestFetchUserConnectorInstances:
 
     async def test_logs_and_returns_empty_list_when_the_lookup_fails(self) -> None:
         graph_provider = MagicMock()
+        error = RuntimeError("graph unavailable")
         graph_provider.get_user_connector_instances = AsyncMock(
-            side_effect=RuntimeError("graph unavailable")
+            side_effect=error
         )
         logger = MagicMock()
 
@@ -50,5 +51,5 @@ class TestFetchUserConnectorInstances:
 
         assert result == []
         logger.warning.assert_called_once_with(
-            "connector instance lookup failed: %s", "graph unavailable"
+            "connector instance lookup failed: %s", error
         )
